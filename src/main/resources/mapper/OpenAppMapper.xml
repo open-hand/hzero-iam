@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.iam.infra.mapper.OpenAppMapper">
+    <select id="listLoginWayByEnabled" resultType="org.hzero.boot.oauth.domain.entity.BaseOpenApp">
+        SELECT
+            app_code,
+            app_name,
+            app_image,
+            app_id,
+            sub_app_id,
+            app_key,
+            order_seq,
+            channel,
+            scope
+        FROM
+            hiam_open_app
+        WHERE
+            enabled_flag = 1
+        ORDER BY order_seq ASC
+    </select>
+    <select id="selectOpenAppList" resultType="org.hzero.iam.domain.entity.OpenApp">
+        SELECT
+            open_app_id,
+            app_code,
+            app_name,
+            app_image,
+            sub_app_id,
+            app_id,
+            channel,
+            scope,
+            enabled_flag,
+            order_seq
+        FROM
+            hiam_open_app
+        <where>
+            <if test="appCode != null and appCode != ''">
+                and app_code = #{appCode}
+            </if>
+            <if test="appName != null and appName != ''">
+              <bind name="appNameLike" value="'%'+appName+'%'" />
+                and app_code like #{appNameLike}
+            </if>
+            <if test="channel != null and channel != ''">
+                and channel = #{channel}
+            </if>
+            <if test="organizationId != null">
+                and organization_id = #{organizationId}
+            </if>
+        </where>
+    </select>
+    <select id="selectOpenAppDetails" resultType="org.hzero.iam.domain.entity.OpenApp">
+        select
+            open_app_id,
+            app_code,
+            app_name,
+            app_image,
+            sub_app_id,
+            app_id,
+            order_seq,
+            channel,
+            scope,
+            object_version_number
+         from
+            hiam_open_app
+        where open_app_id = #{openAppId}
+
+    </select>
+</mapper>

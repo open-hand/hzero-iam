@@ -1,0 +1,158 @@
+# Default values for hzero-iam.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: registry.choerodon.com.cn/hzero-hzero/hzero-iam
+  pullPolicy: Always
+
+preJob:
+  image: registry.cn-hangzhou.aliyuncs.com/choerodon-tools/dbtool:0.6.2
+  timeout: 1200
+  preInitDB:
+    # 是否初始化groovy脚本或excel数据
+    enable: false
+    # 初始化数据库配置
+    datasource:
+      url: jdbc:mysql://db.hzero.org:3306/hzero_platform?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: hzero
+      password: hzero
+
+env:
+  open:
+    # 是否启用数据权限屏蔽
+    HZERO_ENABLE_DATA_PERMISSION: true
+    # 是否刷新密码策略到缓存
+    HZERO_START_INIT_PASSWORD_POPLICY: false
+    # 是否初始化三方登陆方式到缓存
+    HZERO_START_INIT_OPEN_LOGIN_WAY: false
+    # 是否初始化用户到缓存
+    HZERO_START_INIT_USER: false
+    # 是否初始化缓存LDAP
+    HZERO_START_INIT_LDAP: false
+    # 是否初始化缓存客户端
+    HZERO_START_INIT_CLIENT: false
+    # 是否初始化字段权限
+    HZERO_START_INIT_FIELD_PERMISSION: true
+    # 是否初始化单据权限缓存标识
+    HZERO_START_INIT_DOC_AUTH: true
+    # 初始化导入表，第一次启动服务的时候需开启此设置
+    HZERO_IMPORT_INIT_TABLE: false
+    # 测试时禁用验证码功能
+    HZERO_CAPTCHA_TEST_DISABLE: false
+    # 是否开启拦截，只有开启才会拦截租户的新增和更新
+    TENANT_INIT_ASPECT: false
+    # 数据库所有者模式，例如 SqlServer 下的 dbo/guest
+    HZERO_DB_OWNER:
+    # 清除过期权限
+    HZERO_PERMISSION_CLEAN_PERMISSION: false
+    # 资源匹配路径
+    HZERO_RESOURCE_PATTERN: /v1/*,/hzero/*
+    # 不需要刷新权限的服务
+    HZERO_PERMISSION_SKIP_PARSE_SERVICES: register,gateway,oauth,swagger
+    # 是否自动刷新服务权限
+    HZERO_PERMISSION_PARSE_PERMISSION: true
+    # Eureka 注册中心地址
+    EUREKA_DEFAULT_ZONE: http://dev.hzero.org:8000/eureka/
+    # 服务以IP地址注册
+    EUREKA_INSTANCE_PREFER_IP_ADDRESS: true
+    # 是否启用配置中心
+    SPRING_CLOUD_CONFIG_ENABLED: false
+    # 配置中心地址
+    SPRING_CLOUD_CONFIG_URI: http://dev.hzero.org:8010/
+    # 数据库地址
+    SPRING_DATASOURCE_URL: jdbc:mysql://db.hzero.org:3306/hzero_platform?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    # 数据库用户名
+    SPRING_DATASOURCE_USERNAME: hzero
+    # 数据库密码
+    SPRING_DATASOURCE_PASSWORD: hzero
+    # 连接池最小空闲连接数
+    SPRING_DATASOURCE_MINIMUM_IDLE: 20
+    # 连接池允许的最大连接数
+    SPRING_DATASOURCE_MAXIMUM_POOL_SIZE: 200
+    # 等待连接池分配连接的最大时长（毫秒）
+    SPRING_DATASOURCE_CONNECTION_TIMEOUT: 30000
+    # Redis host
+    SPRING_REDIS_HOST: redis.hzero.org
+    # Redis Port
+    SPRING_REDIS_PORT: 6379
+    # Redis DB
+    SPRING_REDIS_DATABASE: 1
+    # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒)
+    # 默认 -1 表示永不超时，设置5秒
+    SPRING_REDIS_POOL_MAX_WAIT: 5000
+    # 资源池中最大连接数
+    # 默认8，-1表示无限制；可根据服务并发redis情况及服务端的支持上限调整
+    SPRING_REDIS_POOL_MAX_ACTIVE: 50
+    # 资源池运行最大空闲的连接数
+    # 默认8，-1表示无限制；可根据服务并发redis情况及服务端的支持上限调整，一般建议和max-active保持一致，避免资源伸缩带来的开销
+    SPRING_REDIS_POOL_MAX_IDLE: 50
+    # Hystrix 熔断超时时间
+    HYSTRIX_COMMAND_TIMEOUT_IN_MILLISECONDS: 40000
+    # Ribbon 读取超时时间
+    RIBBON_READ_TIMEOUT: 30000
+    # Ribbon 连接超时时间
+    RIBBON_CONNECT_TIMEOUT: 3000
+    # IO线程数, 它主要执行非阻塞的任务
+    SERVER_UNDERTOW_IO_THREADS: 4
+    # 阻塞任务线程池
+    SERVER_UNDERTOW_WORKER_THREADS: 128
+    # 每块buffer的空间大小，越小空间被利用越充分
+    SERVER_UNDERTOW_BUFFER_SIZE: 1024
+    # 是否启用数据变更监控功能
+    HZERO_ENABLE_DATA_AUDIT: false
+    # 全局开关，默认 false
+    HZERO_ENABLE_OP_AUDIT: false
+    # 生效配置
+    SPRING_PROFILES_ACTIVE: default
+    HZERO_ACTUATOR_SHOW_EXECUTOR_INFO: true
+    # 用户账号正则
+    HZERO_IAM_USERNAME_REGEX: ^(((?=.*[0-9])(?=.*[a-zA-Z])|(?=.*[0-9])(?=.*[_-])|(?=.*[a-zA-Z])(?=.*[_-]))[\w-]{6,30
+    # 是否启用 Root 用户功能
+    HZERO_USER_ENABLE_ROOT: false
+    HZERO_ENABLE_AUDIT: false
+    # 单据权限租户类型（CUSTOM_TENANT 使用当前租户，USER_TENANT 使用用户所属租户）
+    HZERO_DOC_TENANT_TYPE: CUSTOM_TENANT
+    # 标签
+    SPRING_CLOUD_CONFIG_LABEL:
+    # 是否启用字段权限
+    HZERO_FIELD_PERMISSION_ENABLE: true
+
+    # 日志级别
+    LOG_LEVEL: info
+
+    JAVA_OPTS: >
+      -Xms1024m
+      -Xmx1536m
+
+metrics:
+  path: /actuator/prometheus
+  group: spring-boot
+
+logs:
+  parser: spring-boot
+
+persistence:
+  enabled: false
+
+service:
+  enabled: false
+  type: ClusterIP
+  port: 8030
+  name: hzero-iam
+deployment:
+  managementPort: 8031
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
+  limits:
+    # cpu: 100m
+    memory: 1.7Gi
+  requests:
+    # cpu: 100m
+    memory: 1.2Gi

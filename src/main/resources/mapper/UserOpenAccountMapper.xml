@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.iam.infra.mapper.UserOpenAccountMapper">
+
+    <select id="selectOpenAppAndBindUser" resultType="org.hzero.iam.domain.entity.UserOpenAccount">
+        SELECT
+            hoa.app_code,
+            hoa.app_name,
+            hoa.app_image,
+            hoa.channel,
+            huoa.open_account_id,
+            huoa.open_name
+        FROM hiam_open_app hoa
+        LEFT JOIN hiam_user_open_account huoa ON hoa.app_code = huoa.open_app_code and huoa.username = #{username}
+        WHERE hoa.enabled_flag = 1
+        ORDER BY hoa.order_seq ASC
+    </select>
+</mapper>
