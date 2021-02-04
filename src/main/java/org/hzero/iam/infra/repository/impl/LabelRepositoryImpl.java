@@ -1,20 +1,23 @@
 package org.hzero.iam.infra.repository.impl;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
-import org.apache.commons.lang3.StringUtils;
+
 import org.hzero.iam.domain.entity.Label;
 import org.hzero.iam.domain.repository.LabelRepository;
 import org.hzero.iam.infra.mapper.LabelMapper;
 import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
 import org.hzero.mybatis.domian.Condition;
 import org.hzero.mybatis.util.Sqls;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 资源库实现
@@ -57,5 +60,10 @@ public class LabelRepositoryImpl extends BaseRepositoryImpl<Label> implements La
     @Override
     public List<Label> getLabelListByTypeAndNames(String type, String[] labelName) {
         return labelMapper.getLabelListByTypeAndNames(type, labelName);
+    }
+
+    @Override
+    public boolean containsTplRoleLabel(Set<Long> ids) {
+        return labelMapper.countRoleTplLabel(ids) > 0;
     }
 }

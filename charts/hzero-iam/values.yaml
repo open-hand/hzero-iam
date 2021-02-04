@@ -110,6 +110,10 @@ env:
     HZERO_ACTUATOR_SHOW_EXECUTOR_INFO: true
     # 用户账号正则
     HZERO_IAM_USERNAME_REGEX: ^(((?=.*[0-9])(?=.*[a-zA-Z])|(?=.*[0-9])(?=.*[_-])|(?=.*[a-zA-Z])(?=.*[_-]))[\w-]{6,30
+    # 用户邮箱可为空
+    HZERO_IAM_USER_EMAIL_NULLABLE: true
+    # 用户手机可为空
+    HZERO_IAM_USER_PHONE_NULLABLE: true
     # 是否启用 Root 用户功能
     HZERO_USER_ENABLE_ROOT: false
     HZERO_ENABLE_AUDIT: false

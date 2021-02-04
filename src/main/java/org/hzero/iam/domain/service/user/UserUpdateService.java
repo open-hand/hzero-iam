@@ -2,15 +2,15 @@ package org.hzero.iam.domain.service.user;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import io.choerodon.core.exception.CommonException;
+
 import org.hzero.core.user.UserType;
-import org.hzero.core.util.Regexs;
 import org.hzero.iam.app.service.MemberRoleService;
 import org.hzero.iam.domain.entity.User;
 import org.hzero.iam.domain.entity.UserInfo;
 import org.hzero.iam.infra.feign.OauthAdminFeignClient;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import io.choerodon.core.exception.CommonException;
 
 /**
  * 更新用户服务
@@ -59,21 +59,6 @@ public class UserUpdateService extends UserBuildService {
 
         user.setEmail(StringUtils.defaultIfBlank(user.getEmail(), null));
         user.setPhone(StringUtils.defaultIfBlank(user.getPhone(), null));
-
-        if (StringUtils.isNotBlank(user.getEmail()) && !Regexs.isEmail(user.getEmail())) {
-            throw new CommonException("hiam.warn.user.emailFormatIncorrect");
-        }
-
-        if (StringUtils.isNotBlank(user.getPhone()) && !Regexs.isMobile(user.getInternationalTelCode(), user.getPhone())) {
-            throw new CommonException("hiam.warn.user.phoneFormatIncorrect");
-        }
-
-        if (user.getEndDateActive() != null) {
-            // 有效期起和止可以取同一天...
-            if (user.getEndDateActive().isBefore(user.getStartDateActive())) {
-                throw new IllegalArgumentException("the end date should bigger than start date.");
-            }
-        }
 
         // 检查用户账号相关
         checkUserAccount(user, existUser);

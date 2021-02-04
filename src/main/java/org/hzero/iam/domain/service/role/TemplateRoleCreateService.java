@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 import io.choerodon.core.oauth.DetailsHelper;
+import io.choerodon.mybatis.helper.LanguageHelper;
 
 import org.hzero.core.base.BaseConstants;
 import org.hzero.iam.domain.entity.Label;
@@ -132,10 +133,12 @@ public class TemplateRoleCreateService {
     protected void setupRoleName(Role role, Role tplRole, User adminUser) {
         Map<String, String> tls = roleRepository.selectTplRoleNameById(tplRole.getId());
         if (MapUtils.isEmpty(tls)) {
-            LOGGER.warn("Template role's name is empty!, tplRole is {}", tplRole.getCode());
-            throw new CommonException("hiam.warn.role.tplRoleNameEmpty");
+            LOGGER.warn("Template role's name is empty, then use tepRole's name. tplRole is {}", tplRole.getCode());
+            tls = new HashMap<>();
+            tls.put(LanguageHelper.getDefaultLanguage(), tplRole.getName());
+            tls.put("en_US", tplRole.getName());
         }
-        Map<String, Map<String, String>> _tls = new HashMap<>(4);
+        Map<String, Map<String, String>> _tls = new HashMap<>(2);
         _tls.put(Role.FIELD_NAME, tls);
         role.set_tls(_tls);
         role.setName(tls.get(adminUser.getLanguage()));

@@ -63,6 +63,13 @@ public interface RoleCreateValidator {
     void checkRoleLevel(Role role);
 
     /**
+     * 模板角色校验，如果创建的模板角色，要求编码全局唯一
+     *
+     * @param role 角色
+     */
+    void checkTemplateRoleUnique(Role role);
+
+    /**
      * 检查角色是否存在
      * <p>
      * 租户ID、角色编码、父级角色ID、父级分配层级、父级分配层级值、创建者租户ID 构成组合唯一性索引
@@ -71,6 +78,14 @@ public interface RoleCreateValidator {
      * @param adminUser 管理用户
      */
     void checkRoleExists(Role role, User adminUser);
+
+    /**
+     * 检查角色编码是否与内置角色编码相同，避免输入和超级管理员等内置角色相同的角色编码
+     *
+     * @param role      角色
+     * @param adminUser 管理用户
+     */
+    void checkRoleBuiltIn(Role role, User adminUser);
 
     /**
      * 角色必须是父级角色的子孙角色

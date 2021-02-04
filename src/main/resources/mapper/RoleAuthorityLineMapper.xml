@@ -31,7 +31,7 @@
     <select id="selectDocRoleAuthLine" resultMap="BaseResultMap">
         SELECT
             hra.auth_scope_code,
-            hdt.doc_type_id,
+            hra.auth_doc_type_id,
             hral.role_id,
             hral.auth_type_code
         FROM

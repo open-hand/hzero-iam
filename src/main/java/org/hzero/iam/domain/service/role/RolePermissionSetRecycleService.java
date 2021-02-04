@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
 
-import org.hzero.iam.domain.entity.MemberRole;
 import org.hzero.iam.domain.entity.Role;
 import org.hzero.iam.domain.entity.RolePermission;
 import org.hzero.iam.domain.repository.MemberRoleRepository;
@@ -93,10 +92,9 @@ public class RolePermissionSetRecycleService {
 
     private void checkRolePsRecyclable(Long roleId) {
         CustomUserDetails self = UserUtils.getUserDetails();
-        MemberRole mr = new MemberRole(roleId, self.getUserId(), Constants.MemberType.USER);
-        long count = memberRoleRepository.selectCount(mr);
-        if (count > 0) {
-            throw new CommonException("hiam.warn.role.denyRecyclePsToSelfRole");
+        boolean topAdminRole = roleRepository.isTopAdminRole(self.getUserId(), roleId);
+        if (topAdminRole ) {
+            throw new CommonException("hiam.warn.role.denyOperationSelfTopRole");
         }
     }
 

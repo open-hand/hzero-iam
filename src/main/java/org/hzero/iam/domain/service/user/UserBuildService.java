@@ -18,6 +18,7 @@ import io.choerodon.core.exception.CommonException;
 import org.hzero.boot.platform.encrypt.EncryptClient;
 import org.hzero.common.UserSource;
 import org.hzero.core.base.BaseConstants;
+import org.hzero.core.util.Regexs;
 import org.hzero.iam.config.IamProperties;
 import org.hzero.iam.domain.entity.User;
 import org.hzero.iam.domain.repository.UserRepository;
@@ -61,6 +62,9 @@ public abstract class UserBuildService implements InitializingBean {
         // 初始化用户信息
         initUser(user);
 
+        // 基础信息校验
+        baseValidity(user);
+
         // 用户有效性检查
         checkValidity(user);
 
@@ -99,6 +103,9 @@ public abstract class UserBuildService implements InitializingBean {
 
         // 初始化用户信息
         initUser(user);
+
+        // 基础信息校验
+        baseValidity(user);
 
         // 用户有效性检查
         checkValidity(user);
@@ -169,6 +176,30 @@ public abstract class UserBuildService implements InitializingBean {
                 decryptPassword = user.getPassword();
             }
             user.setPassword(decryptPassword);
+        }
+    }
+
+    protected void baseValidity(User user) {
+        if (!iamProperties.isUserEmailNullable() && StringUtils.isBlank(user.getEmail())) {
+            throw new CommonException("hiam.warn.user.emailNonnull");
+        }
+        if (!iamProperties.isUserPhoneNullable() && StringUtils.isBlank(user.getPhone())) {
+            throw new CommonException("hiam.warn.user.phoneNonnull");
+        }
+
+        if (StringUtils.isNotBlank(user.getEmail()) && !Regexs.isEmail(user.getEmail())) {
+            throw new CommonException("hiam.warn.user.emailFormatIncorrect");
+        }
+
+        if (StringUtils.isNotBlank(user.getPhone()) && !Regexs.isMobile(user.getInternationalTelCode(), user.getPhone())) {
+            throw new CommonException("hiam.warn.user.phoneFormatIncorrect");
+        }
+
+        if (user.getEndDateActive() != null) {
+            // 有效期起和止可以取同一天...
+            if (user.getEndDateActive().isBefore(user.getStartDateActive())) {
+                throw new CommonException("hiam.warn.user.endDateBiggerThenStartDate");
+            }
         }
     }
 

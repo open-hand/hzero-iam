@@ -211,6 +211,7 @@
             iu.real_name,
             iu.organization_id,
             iu.email,
+            iu.international_tel_code,
             iu.phone,
             iu.is_locked,
             iu.is_enabled,
@@ -348,7 +349,7 @@
     <!-- 查询当前登录用户简要信息 -->
     <select id="selectSelf" parameterType="org.hzero.iam.domain.vo.UserVO" resultMap="UserVO">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         SELECT
             <!-- 日期时间格式 -->
             hui.date_format,
@@ -415,7 +416,7 @@
 
     <select id="selectTenantAccess" resultType="org.hzero.iam.domain.entity.Tenant">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         SELECT
             hta.access_count,
             hta.access_datetime,
@@ -795,7 +796,7 @@
     </select>
 
     <update id="disableByIdList">
-        <bind name="now" value="@org.hzero.iam.infra.util.DateUtils@now()"/>
+        <bind name="now" value="@java.time.LocalDateTime@now()" />
         UPDATE iam_user SET
             is_enabled = 0,
             last_update_date = #{now}

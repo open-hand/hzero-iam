@@ -12,7 +12,6 @@ import io.choerodon.core.oauth.CustomUserDetails;
 
 import org.hzero.boot.oauth.domain.service.UserPasswordService;
 import org.hzero.core.user.UserType;
-import org.hzero.core.util.Regexs;
 import org.hzero.iam.domain.entity.Tenant;
 import org.hzero.iam.domain.entity.User;
 import org.hzero.iam.domain.entity.UserInfo;
@@ -60,21 +59,6 @@ public class UserCreateService extends UserBuildService {
     protected void checkValidity(User user) {
         if (StringUtils.isBlank(user.getRealName())) {
             throw new CommonException("hiam.warn.user.parameterNotBeNull", "realName");
-        }
-
-        if (StringUtils.isNotBlank(user.getEmail()) && !Regexs.isEmail(user.getEmail())) {
-            throw new CommonException("hiam.warn.user.emailFormatIncorrect");
-        }
-
-        if (StringUtils.isNotBlank(user.getPhone()) && !Regexs.isMobile(user.getInternationalTelCode(), user.getPhone())) {
-            throw new CommonException("hiam.warn.user.phoneFormatIncorrect");
-        }
-
-        if (user.getEndDateActive() != null) {
-            // 有效期起和止可以取同一天...
-            if (user.getEndDateActive().isBefore(user.getStartDateActive())) {
-                throw new CommonException("hiam.warn.user.endDateBiggerThenStartDate");
-            }
         }
 
         // 检查用户角色

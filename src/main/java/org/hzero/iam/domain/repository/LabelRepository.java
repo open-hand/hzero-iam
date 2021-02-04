@@ -1,11 +1,13 @@
 package org.hzero.iam.domain.repository;
 
+import java.util.List;
+import java.util.Set;
+
 import io.choerodon.core.domain.Page;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+
 import org.hzero.iam.domain.entity.Label;
 import org.hzero.mybatis.base.BaseRepository;
-
-import java.util.List;
 
 /**
  * 资源库
@@ -43,4 +45,11 @@ public interface LabelRepository extends BaseRepository<Label> {
      * 根据标签编码和标签类型查询
      */
     List<Label> getLabelListByTypeAndNames(String type, String[] labelName);
+
+    /**
+     * 查询标签中模板角色的数量
+     *
+     * @param ids 标签ID
+     */
+    boolean containsTplRoleLabel(Set<Long> ids);
 }

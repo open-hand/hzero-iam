@@ -231,7 +231,7 @@
     </delete>
 
     <update id="batchUpdateBySql">
-        <bind name="now" value="@org.hzero.iam.infra.util.DateUtils@now()"/>
+        <bind name="now" value="@java.time.LocalDateTime@now()" />
         <bind name="lastUpdatedBy" value="@org.hzero.iam.infra.common.utils.UserUtils@getCurrentUserId()"/>
         UPDATE HIAM_SEC_GRP_DCL_DIM_LINE SET
             ASSIGN_TYPE_CODE = #{assignTypeCode},

@@ -6,7 +6,6 @@ import org.hzero.iam.domain.entity.Role;
 import org.hzero.iam.domain.entity.User;
 
 /**
- *
  * @author bojiangzhou 2020/07/16
  */
 @Component
@@ -17,6 +16,16 @@ public class InternalRoleCreateValidator extends DefaultRoleCreateValidator {
      */
     @Override
     public void checkAdminRole(Role role, User adminUser) {
+        // not check ...
+    }
+
+    @Override
+    public void checkRoleIsSubOfParentRole(Long parentRoleId, Long roleId) {
+        // not check ...
+    }
+
+    @Override
+    public void checkRoleBuiltIn(Role role, User adminUser) {
         // not check ...
     }
 }

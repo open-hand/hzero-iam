@@ -16,7 +16,7 @@
         <result column="last_update_date" property="lastUpdateDate" jdbcType="DATE"/>
     </resultMap>
     <update id="updateSecGrpPermission">
-        <bind name="now" value="@org.hzero.iam.infra.util.DateUtils@now()"/>
+        <bind name="now" value="@java.time.LocalDateTime@now()" />
         <bind name="lastUpdatedBy" value="@org.hzero.iam.infra.common.utils.UserUtils@getCurrentUserId()"/>
         update hiam_field_permission set
             data_source = #{dataSourceValue},

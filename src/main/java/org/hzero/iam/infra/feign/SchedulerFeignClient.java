@@ -23,7 +23,7 @@ public interface SchedulerFeignClient {
      * @return JobInfoDTO
      */
     @GetMapping("/{organizationId}/job-info/{jobId}")
-    ResponseEntity<String> detailJob(@PathVariable Long organizationId, @PathVariable Long jobId);
+    ResponseEntity<String> detailJob(@PathVariable("organizationId") Long organizationId, @PathVariable("jobId") Long jobId);
 
     /**
      * 更新调度任务
@@ -33,7 +33,7 @@ public interface SchedulerFeignClient {
      * @return JobInfoDTO
      */
     @PutMapping("/{organizationId}/job-info")
-    ResponseEntity<String> updateJob(@PathVariable Long organizationId, @RequestBody JobInfoDTO jobInfo);
+    ResponseEntity<String> updateJob(@PathVariable("organizationId") Long organizationId, @RequestBody JobInfoDTO jobInfo);
 
     /**
      * 暂停调度任务
@@ -43,7 +43,7 @@ public interface SchedulerFeignClient {
      * @return Void
      */
     @PostMapping("/{organizationId}/job-info/pause")
-    ResponseEntity<Void> pauseJob(@PathVariable Long organizationId, @RequestBody JobInfoDTO jobInfo);
+    ResponseEntity<Void> pauseJob(@PathVariable("organizationId") Long organizationId, @RequestBody JobInfoDTO jobInfo);
 
     /**
      * 恢复调度任务
@@ -53,7 +53,7 @@ public interface SchedulerFeignClient {
      * @return Void
      */
     @PostMapping("/{organizationId}/job-info/resume")
-    ResponseEntity<Void> resumeJob(@PathVariable Long organizationId, @RequestBody JobInfoDTO jobInfo);
+    ResponseEntity<Void> resumeJob(@PathVariable("organizationId") Long organizationId, @RequestBody JobInfoDTO jobInfo);
 
     /**
      * 创建调度任务
@@ -63,7 +63,7 @@ public interface SchedulerFeignClient {
      * @return JobInfoDTO
      */
     @PostMapping("/{organizationId}/job-info")
-    ResponseEntity<String> createJob(@PathVariable Long organizationId, @RequestBody JobInfoDTO jobInfo);
+    ResponseEntity<String> createJob(@PathVariable("organizationId") Long organizationId, @RequestBody JobInfoDTO jobInfo);
 
     /**
      * 查询执行器
@@ -73,6 +73,6 @@ public interface SchedulerFeignClient {
      * @return Page<ExecutorDTO>
      */
     @GetMapping("/{organizationId}/executors")
-    ResponseEntity<String> pageExecutor(@PathVariable Long organizationId,
+    ResponseEntity<String> pageExecutor(@PathVariable("organizationId") Long organizationId,
                     @RequestParam("executorCode") String executorCode);
 }

@@ -106,7 +106,9 @@ public class RoleVO implements SecurityToken, Cacheable {
     private Long assignLevelValue;
     private String assignLevelValueMeaning;
     private String roleSourceMeaning;
+    @JsonIgnore
     private List<PermissionVO> permissions;
+    @JsonIgnore
     private RoleVO inheritedRole;
     /**
      * 只查第一层节点节点标识
@@ -205,13 +207,16 @@ public class RoleVO implements SecurityToken, Cacheable {
      * 排除用户已分配角色, 用户ID列表
      */
     @Encrypt
+    @JsonIgnore
     private List<Long> excludeRoleIds;
     @Encrypt
+    @JsonIgnore
     private List<Long> excludeUserIds;
     // 排除的用户ID
     @Encrypt
     private Long excludeUserId;
     // 查询可分配的角色
+    @JsonIgnore
     private boolean selectAssignedRoleFlag = false;
     // 孩子数量
     private Integer childrenNum;

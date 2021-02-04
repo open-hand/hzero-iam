@@ -108,7 +108,7 @@
         select
           im.id,
           im.code as code,
-          (case when imt.name is not null then imt.name else im.name end ) name,
+          (case when imt.name is not null then imt.name else im.name end ) as name,
           im.h_quick_index as quick_index,
           im.fd_level as "level",
           im.parent_id,
@@ -549,10 +549,10 @@
         and exists (
             select 1
             from iam_role ir
-            join iam_menu im_ps on (im_ps.fd_level = ir.fd_level and im_ps.type = 'ps' and im_ps.h_enabled_flag = 1)
-            join iam_role_permission irp on (irp.permission_id = im_ps.id and irp.role_id = ir.id and irp.type = 'SG')
+            join iam_role_permission irp on (irp.role_id = ir.id and irp.type = 'SG')
             join hiam_sec_grp hsg on (hsg.sec_grp_id = irp.permission_id and hsg.enabled_flag = 1)
-            join hiam_sec_grp_acl hsga on (hsga.sec_grp_id = hsg.sec_grp_id and hsga.permission_id = im_ps.id)
+            join hiam_sec_grp_acl hsga on (hsga.sec_grp_id = hsg.sec_grp_id)
+            join iam_menu im_ps on (hsga.permission_id = im_ps.id and im_ps.type = 'ps' and im_ps.h_enabled_flag = 1)
             where
                 ir.is_enabled = 1
                 and ir.id in
@@ -560,6 +560,7 @@
                     #{roleId}
                 </foreach>
             and (irp.h_create_flag = 'Y' or irp.h_inherit_flag = 'Y')
+            and im.fd_level = ir.fd_level
             and (im_ps.h_level_path like concat(im.h_level_path, '|%'))
             <!--    排除回收的数据    -->
             and not exists (
@@ -581,7 +582,7 @@
         im.code as code,
         im.fd_level,
         im.type as type,
-        (case when imt.name is not null then imt.name else im.name end ) name
+        (case when imt.name is not null then imt.name else im.name end ) as name
         from iam_menu im
         left join iam_menu_tl imt on (imt.id = im.id and imt.lang = #{lang})
         where im.h_enabled_flag = 1
@@ -616,7 +617,7 @@
         select
         im_ps.id,
         im_ps.code as code,
-        (case when imt_ps.name is not null then imt_ps.name else im_ps.name end ) name,
+        (case when imt_ps.name is not null then imt_ps.name else im_ps.name end ) as name,
         im_ps.fd_level,
         im_ps.parent_id,
         im_ps.type as type,
@@ -679,7 +680,7 @@
     <!-- 返回权限集检查状态 -->
     <select id="checkPermissionSets" resultType="org.hzero.iam.api.dto.PermissionCheckDTO">
         select
-            ps.code as code,
+            ps.code as "code",
             ps.h_controller_type controller_type,
             1 approve
         from iam_menu ps
@@ -812,7 +813,7 @@
         ip.path as path,
         ip.method as method,
         ip.fd_level as "level",
-        case when ipt.description is null then ip.description else ipt.description end description,
+        case when ipt.description is null then ip.description else ipt.description end as description,
         ip.service_name
         from iam_permission ip
         left join iam_permission_tl ipt on (ip.id = ipt.id and ipt.lang = #{lang})
@@ -894,7 +895,7 @@
         else 'N'
         end
         else null
-        end checked_flag
+        end as checked_flag
         from iam_menu im_out
         join (select im_ps.h_level_path, current_role.code, current_role.fd_level, irp.h_create_flag, irp.h_inherit_flag
         from iam_menu im_ps
@@ -943,8 +944,8 @@
 
         select DISTINCT
         im_out.id,
-        im_out.code as code,
-        (case when imt_out.name is not null then imt_out.name else im_out.name end) name,
+        im_out.code as "code",
+        (case when imt_out.name is not null then imt_out.name else im_out.name end) as "name",
         im_out.parent_id,
         im_out.type as type,
         im_out.sort,
@@ -957,7 +958,7 @@
         case when im_out.type = 'ps' then
             case when (irp_out.h_create_flag = 'Y' or irp_out.h_inherit_flag = 'Y') then 'Y' else 'N'
             end else null
-        end checked_flag
+        end as "checked_flag"
         from iam_menu im_out
         <!-- 限制菜单层级 -->
         join iam_role ir on (

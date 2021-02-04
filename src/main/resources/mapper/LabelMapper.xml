@@ -94,4 +94,15 @@
             </foreach>
         </if>
     </select>
+
+    <select id="countRoleTplLabel" resultType="java.lang.Integer">
+        <bind name="tplRoleLabel" value="@org.hzero.iam.domain.entity.Role@LABEL_ROLE_TPL_LIKE"/>
+        select count(*)
+        from iam_label il
+        where il.name like #{tplRoleLabel}
+        and il.id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

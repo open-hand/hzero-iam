@@ -162,6 +162,10 @@ hzero:
     doc-tenant-type: ${HZERO_DOC_TENANT_TYPE:CUSTOM_TENANT} # 单据权限租户类型（CUSTOM_TENANT 使用当前租户，USER_TENANT 使用用户所属租户）
     # 用户账号正则
     username-regex: ${HZERO_IAM_USERNAME_REGEX:^(((?=.*[0-9])(?=.*[a-zA-Z])|(?=.*[0-9])(?=.*[_-])|(?=.*[a-zA-Z])(?=.*[_-]))[\w-]{6,30})$}
+    # 用户邮箱可为空
+    user-email-nullable: ${HZERO_IAM_USER_EMAIL_NULLABLE:true}
+    # 用户手机可为空
+    user-phone-nullable: ${HZERO_IAM_USER_PHONE_NULLABLE:true}
   resource:
     # 匹配的资源才会解析JwtToken便于得到UserDetails
     pattern: ${HZERO_RESOURCE_PATTERN:/v1/*,/hzero/*,/iam/v1/*,/iam/hzero/*}

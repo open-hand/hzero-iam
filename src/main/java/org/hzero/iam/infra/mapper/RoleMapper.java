@@ -223,4 +223,6 @@ public interface RoleMapper extends BaseMapper<Role> {
     List<RoleVO> selectSubAssignedRoles(@Param("roleId") Long roleId, @Param("userId") Long userId);
 
     List<Role> selectRoleByLabel(@Param("tenantId") Long tenantId, @Param("roleLabels") Set<String> roleLabels, @Param("assignType") String assignType);
+
+    List<Long> queryTopAdminRoleId(@Param("userId") Long userId, @Param("roleId") Long roleId);
 }

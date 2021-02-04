@@ -239,7 +239,7 @@
         JOIN hpfm_tenant_tl htt ON htt.tenant_id = ir.h_tenant_id AND htt.lang = #{lang}
         WHERE hsg.sec_grp_id = #{secGrpId}
         <if test="query.name!=null and query.name!=''">
-            <bind name="roleNameLike" value="'%'+ roleSearchDTO.name +'%'" />
+            <bind name="roleNameLike" value="'%'+ query.name +'%'" />
             and ir.name like #{roleNameLike}
         </if>
     </select>

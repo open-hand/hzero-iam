@@ -333,4 +333,10 @@ public interface RoleRepository extends BaseRepository<Role> {
      * @param roleLabels 角色标签
      */
     List<Role> selectRoleByLabel(@Nullable Long tenantId, @Nonnull Set<String> roleLabels, @Nullable String assignType);
+
+
+    /**
+     * 判断角色是否是自己已分配角色中权限最大的顶级角色
+     */
+    boolean isTopAdminRole(Long userId, Long roleId);
 }

@@ -31,6 +31,15 @@ public class IamProperties {
      */
     private String usernameRegex = "^(((?=.*[0-9])(?=.*[a-zA-Z])|(?=.*[0-9])(?=.*[_-])|(?=.*[a-zA-Z])(?=.*[_-]))[\\w-]{6,30})$";
 
+    /**
+     * 用户邮箱可以为空
+     */
+    private boolean userEmailNullable = true;
+    /**
+     * 用户手机号可以为空
+     */
+    private boolean userPhoneNullable = true;
+
     public Permission getPermission() {
         return permission;
     }
@@ -69,6 +78,22 @@ public class IamProperties {
 
     public void setUsernameRegex(String usernameRegex) {
         this.usernameRegex = usernameRegex;
+    }
+
+    public boolean isUserEmailNullable() {
+        return userEmailNullable;
+    }
+
+    public void setUserEmailNullable(boolean userEmailNullable) {
+        this.userEmailNullable = userEmailNullable;
+    }
+
+    public boolean isUserPhoneNullable() {
+        return userPhoneNullable;
+    }
+
+    public void setUserPhoneNullable(boolean userPhoneNullable) {
+        this.userPhoneNullable = userPhoneNullable;
     }
 
     /**

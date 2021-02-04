@@ -79,6 +79,9 @@ public class RoleCreateService {
         // 检查角色层级
         validator.checkRoleLevel(role);
 
+        // 如果创建的模板角色，检查编码是否全局唯一
+        validator.checkTemplateRoleUnique(role);
+
         // 检查角色是否存在
         validator.checkRoleExists(role, adminUser);
 

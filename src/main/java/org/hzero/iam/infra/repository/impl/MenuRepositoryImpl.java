@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
@@ -126,6 +127,7 @@ public class MenuRepositoryImpl extends BaseRepositoryImpl<Menu> implements Menu
         // 查询角色关联的菜单
         CompletableFuture<List<Menu>> f1 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             List<Menu> menus = menuMapper.selectRoleMenus(roleIds, tenantId, finalLang, labels, unionLabel);
             SecurityTokenHelper.clear();
             return menus;
@@ -134,6 +136,7 @@ public class MenuRepositoryImpl extends BaseRepositoryImpl<Menu> implements Menu
         // 查询安全组关联的菜单
         CompletableFuture<List<Menu>> f2 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             List<Menu> menus = menuMapper.selectSecGrpMenus(roleIds, tenantId, finalLang, labels, unionLabel);
             SecurityTokenHelper.clear();
             return menus;
@@ -251,9 +254,11 @@ public class MenuRepositoryImpl extends BaseRepositoryImpl<Menu> implements Menu
 
         PermissionSetSearchDTO finalPermissionSetParam = permissionSetParam;
 
+        CustomUserDetails self = DetailsHelper.getUserDetails();
         // 查出所有菜单权限集
         CompletableFuture<List<Menu>> f1 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             List<Menu> menus = menuMapper.listRolePermissionSet(finalPermissionSetParam);
             SecurityTokenHelper.clear();
             return menus;
@@ -262,6 +267,7 @@ public class MenuRepositoryImpl extends BaseRepositoryImpl<Menu> implements Menu
         // 查询父级角色关联的权限集
         CompletableFuture<List<RolePermissionVO>> f2 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             List<RolePermissionVO> rps = menuMapper.listRolePermission(finalPermissionSetParam);
             SecurityTokenHelper.clear();
             return rps;

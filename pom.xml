@@ -10,7 +10,7 @@
         <version>1.4.3.RELEASE</version>
     </parent>
     <artifactId>hzero-iam</artifactId>
-    <version>1.4.4.RELEASE</version>
+    <version>1.4.7.RELEASE</version>
 
     <properties>
         <spock.version>1.0-groovy-2.4</spock.version>

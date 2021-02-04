@@ -192,12 +192,10 @@
     <!--  查询用户的管理角色  -->
     <select id="selectUserAdminRoles" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="siteSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@SITE"/>
         <bind name="tenantSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@TENANT"/>
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
-        <bind name="now"
-              value="@org.apache.commons.lang3.time.DateUtils@truncate(new java.util.Date(), @java.util.Calendar@DATE)"/>
         select
             httl.tenant_name,
             <include refid="RoleBaseColumn" />
@@ -242,11 +240,11 @@
     <!--  查询用户的管理角色  -->
     <select id="selectUserAssignedRoles" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="siteSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@SITE"/>
         <bind name="tenantSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@TENANT"/>
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
-        <bind name="now" value="@org.apache.commons.lang3.time.DateUtils@truncate(new java.util.Date(), @java.util.Calendar@DATE)"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
 
         select
             ht.tenant_num,
@@ -287,7 +285,7 @@
     <select id="selectUserManageableRoleTree" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
         <bind name="roleLabelDataType" value="@org.hzero.iam.domain.entity.Role@LABEL_DATA_TYPE"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
 
         SELECT DISTINCT ir.*,
@@ -693,7 +691,7 @@
     <!--  查询用户管理的角色  -->
     <select id="selectUserManageableRoles" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="roleLabelDataType" value="@org.hzero.iam.domain.entity.Role@LABEL_DATA_TYPE"/>
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
         SELECT DISTINCT ir.*
@@ -915,7 +913,7 @@
     <!-- 查询 member 关联的角色 -->
     <select id="selectMemberRoles" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
         <bind name="siteSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@SITE"/>
         <bind name="tenantSuperRole" value="@org.hzero.common.HZeroConstant$RoleCode@TENANT"/>
@@ -1070,8 +1068,8 @@
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
         SELECT
             ir.id,
-            ir.code as code,
-            irt.name as name,
+            ir.code as "code",
+            irt.name as "name",
             ir.description,
             ir.fd_level as "level",
             ir.h_tenant_id as tenantId,
@@ -1088,13 +1086,17 @@
         JOIN hpfm_tenant_tl httl ON ht.tenant_id = httl.tenant_id AND httl.lang = #{lang}
         <where>
             <include refid="RoleBaseCondition" />
+            <if test="name != null">
+                <bind name="nameLike" value="'%' + name + '%'"/>
+                and irt.name LIKE #{nameLike}
+            </if>
         </where>
         ORDER BY ir.id
     </select>
 
     <select id="selectAdminRole" resultMap="BaseResultMap">
         <bind name="lang" value="@io.choerodon.mybatis.helper.LanguageHelper@language()"/>
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         <bind name="adminRolePs" value="@org.hzero.iam.infra.constant.Constants@ADMIN_ROLE_PS"/>
         SELECT
             ir.id,
@@ -1268,7 +1270,7 @@
     </select>
 
     <select id="selectUserRole" resultType="org.hzero.iam.domain.entity.Role">
-        <bind name="now" value="@java.time.LocalDate@now().toString()"/>
+        <bind name="now" value="@java.time.LocalDate@now()" />
         SELECT
             id,
             name,
@@ -1453,8 +1455,8 @@
     <select id="selectBuiltInTemplateRole" resultMap="RoleLabel">
         select
             ir.id,
-            ir.name as name,
-            ir.code as code,
+            ir.name as "name",
+            ir.code as "code",
             ir.fd_level,
             ir.h_tenant_id,
             ir.h_inherit_role_id,
@@ -1560,8 +1562,23 @@
         )
     </select>
 
+    <select id="queryTopAdminRoleId" resultType="java.lang.Long">
+        select
+            ir.id
+        from iam_role ir
+        join (
+            select
+                min(ir.h_level_path) as super_role_path
+            from iam_member_role imr
+            join iam_role ir on imr.role_id = ir.id
+            join iam_role ir1 on (ir1.id = #{roleId} and ir.fd_level = ir1.fd_level)
+            where member_id = #{userId}
+            and member_type = 'user'
+        ) ir2 on ir2.super_role_path = ir.h_level_path
+    </select>
+
     <update id="batchUpdateEnableFlagBySql">
-        <bind name="now" value="@org.hzero.iam.infra.util.DateUtils@now()"/>
+        <bind name="now" value="@java.time.LocalDateTime@now()" />
         <bind name="lastUpdatedBy" value="@org.hzero.iam.infra.common.utils.UserUtils@getCurrentUserId()"/>
         update iam_role set
             is_enabled = #{enableFlag},

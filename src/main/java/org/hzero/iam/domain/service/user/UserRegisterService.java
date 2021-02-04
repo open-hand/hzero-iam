@@ -3,20 +3,20 @@ package org.hzero.iam.domain.service.user;
 import java.time.LocalDate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import io.choerodon.core.exception.CommonException;
+
 import org.hzero.common.UserSource;
 import org.hzero.core.base.BaseConstants;
 import org.hzero.core.user.UserType;
-import org.hzero.core.util.Regexs;
 import org.hzero.iam.app.service.MemberRoleService;
 import org.hzero.iam.domain.entity.User;
 import org.hzero.iam.domain.entity.UserInfo;
 import org.hzero.iam.domain.repository.MemberRoleRepository;
 import org.hzero.iam.domain.repository.RoleRepository;
 import org.hzero.iam.infra.constant.Constants;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import io.choerodon.core.exception.CommonException;
 
 /**
  * 创建注册服务
@@ -74,14 +74,6 @@ public class UserRegisterService extends UserBuildService {
         }
         if (StringUtils.isBlank(user.getPassword())) {
             throw new CommonException("hiam.warn.user.parameterNotBeNull", "password");
-        }
-
-        if (StringUtils.isNotBlank(user.getEmail()) && !Regexs.isEmail(user.getEmail())) {
-            throw new CommonException("hiam.warn.user.emailFormatIncorrect");
-        }
-
-        if (StringUtils.isNotBlank(user.getPhone()) && !Regexs.isMobile(user.getInternationalTelCode(), user.getPhone())) {
-            throw new CommonException("hiam.warn.user.phoneFormatIncorrect");
         }
 
         // 检查用户账号相关

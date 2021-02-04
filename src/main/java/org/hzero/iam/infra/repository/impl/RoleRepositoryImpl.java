@@ -600,6 +600,12 @@ public class RoleRepositoryImpl extends BaseRepositoryImpl<Role> implements Role
         return roleMapper.selectRoleByLabel(tenantId, roleLabels, assignType);
     }
 
+    @Override
+    public boolean isTopAdminRole(Long userId, Long roleId) {
+        List<Long> topRoleIds = roleMapper.queryTopAdminRoleId(userId, roleId);
+        return topRoleIds != null && topRoleIds.contains(roleId);
+    }
+
     private List<RoleVO> selectCurrentTenantMemberRoles(CustomUserDetails self, boolean onlyCurrentRole) {
         RoleVO params = new RoleVO();
         params.setMemberId(self.getUserId());

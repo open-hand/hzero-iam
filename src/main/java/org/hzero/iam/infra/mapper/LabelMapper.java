@@ -1,10 +1,13 @@
 package org.hzero.iam.infra.mapper;
 
-import io.choerodon.mybatis.common.BaseMapper;
-import org.apache.ibatis.annotations.Param;
-import org.hzero.iam.domain.entity.Label;
-
 import java.util.List;
+import java.util.Set;
+
+import org.apache.ibatis.annotations.Param;
+
+import io.choerodon.mybatis.common.BaseMapper;
+
+import org.hzero.iam.domain.entity.Label;
 
 /**
  * Mapper
@@ -33,4 +36,6 @@ public interface LabelMapper extends BaseMapper<Label> {
      * 根据标签编码和标签类型查询
      */
     List<Label> getLabelListByTypeAndNames(@Param("type") String type, @Param("labelName") String[] labelName);
+
+    int countRoleTplLabel(@Param("list") Set<Long> ids);
 }

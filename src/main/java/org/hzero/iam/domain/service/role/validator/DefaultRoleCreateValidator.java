@@ -3,6 +3,8 @@ package org.hzero.iam.domain.service.role.validator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,15 +14,19 @@ import org.springframework.stereotype.Component;
 import io.choerodon.core.exception.CommonException;
 
 import org.hzero.core.base.BaseConstants;
+import org.hzero.iam.domain.entity.Label;
 import org.hzero.iam.domain.entity.Role;
 import org.hzero.iam.domain.entity.Tenant;
 import org.hzero.iam.domain.entity.User;
+import org.hzero.iam.domain.repository.LabelRepository;
 import org.hzero.iam.domain.repository.RoleRepository;
 import org.hzero.iam.domain.repository.TenantRepository;
 import org.hzero.iam.domain.repository.UserRepository;
 import org.hzero.iam.domain.vo.RoleVO;
 import org.hzero.iam.infra.constant.HiamError;
 import org.hzero.iam.infra.constant.HiamResourceLevel;
+import org.hzero.mybatis.domian.Condition;
+import org.hzero.mybatis.util.Sqls;
 
 /**
  *
@@ -35,6 +41,8 @@ public class DefaultRoleCreateValidator implements RoleCreateValidator {
     protected UserRepository userRepository;
     @Autowired
     protected RoleRepository roleRepository;
+    @Autowired
+    protected LabelRepository labelRepository;
 
     @Override
     public void checkAdminUser(Role role, User adminUser) {
@@ -180,6 +188,24 @@ public class DefaultRoleCreateValidator implements RoleCreateValidator {
     }
 
     @Override
+    public void checkTemplateRoleUnique(Role role) {
+        List<Label> labels = role.getRoleLabels();
+        if (CollectionUtils.isEmpty(labels)) {
+            return;
+        }
+
+        Set<Long> ids = labels.stream().map(Label::getId).collect(Collectors.toSet());
+        if (!labelRepository.containsTplRoleLabel(ids)) {
+            return;
+        }
+
+        long count = roleRepository.selectCountByCondition(Condition.builder(Role.class).andWhere(Sqls.custom().andEqualTo(Role.FIELD_CODE, role.getCode())).build());
+        if (count > 0) {
+            throw new CommonException("hiam.warn.role.tplRoleCodeUnique");
+        }
+    }
+
+    @Override
     public void checkRoleExists(Role role, User adminUser) {
         Role params = new Role();
 
@@ -193,6 +219,19 @@ public class DefaultRoleCreateValidator implements RoleCreateValidator {
         // 判断编码是否重复
         if (roleRepository.selectCount(params) > 0) {
             throw new CommonException(HiamError.ROLE_CODE_EXISTS);
+        }
+
+        checkRoleBuiltIn(role, adminUser);
+    }
+
+    @Override
+    public void checkRoleBuiltIn(Role role, User adminUser) {
+        // 不能与内置角色编码重复
+        long count = roleRepository.selectCountByCondition(Condition.builder(Role.class)
+                .where(Sqls.custom().andEqualTo(Role.FIELD_CODE, role.getCode()).andEqualTo(Role.FIELD_BUILD_IN, Boolean.TRUE)).build());
+
+        if (count > 0) {
+            throw new CommonException("hiam.warn.role.builtInRoleCodeUnique");
         }
     }
 
@@ -209,4 +248,5 @@ public class DefaultRoleCreateValidator implements RoleCreateValidator {
             throw new CommonException("hiam.warn.role.noAuthority");
         }
     }
+
 }

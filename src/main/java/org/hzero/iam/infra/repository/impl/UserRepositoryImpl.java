@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 import io.choerodon.core.domain.Page;
 import io.choerodon.core.exception.CommonException;
 import io.choerodon.core.oauth.CustomUserDetails;
+import io.choerodon.core.oauth.DetailsHelper;
 import io.choerodon.mybatis.pagehelper.PageHelper;
 import io.choerodon.mybatis.pagehelper.domain.PageRequest;
 
@@ -191,6 +192,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
         // 查询当前用户
         CompletableFuture<UserVO> f1 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             UserVO userVO = userMapper.selectSelf(params);
             SecurityTokenHelper.clear();
             return userVO;
@@ -199,6 +201,7 @@ public class UserRepositoryImpl extends BaseRepositoryImpl<User> implements User
         // 查询用户最近访问的租户
         CompletableFuture<List<Tenant>> f2 = CompletableFuture.supplyAsync(() -> {
             SecurityTokenHelper.close();
+            DetailsHelper.setCustomUserDetails(self);
             List<Tenant> recentTenants = userMapper.selectTenantAccess(params);
             SecurityTokenHelper.clear();
             return recentTenants;

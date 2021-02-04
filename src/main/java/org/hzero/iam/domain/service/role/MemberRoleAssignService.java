@@ -1,6 +1,9 @@
 package org.hzero.iam.domain.service.role;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import io.choerodon.core.exception.CommonException;
+import io.choerodon.core.oauth.CustomUserDetails;
 
 import org.hzero.iam.domain.entity.Client;
 import org.hzero.iam.domain.entity.MemberRole;
@@ -19,6 +23,7 @@ import org.hzero.iam.domain.entity.User;
 import org.hzero.iam.domain.repository.*;
 import org.hzero.iam.domain.service.role.observer.RoleAssignObserver;
 import org.hzero.iam.domain.vo.RoleVO;
+import org.hzero.iam.infra.common.utils.UserUtils;
 import org.hzero.iam.infra.constant.HiamMemberType;
 import org.hzero.iam.infra.constant.HiamResourceLevel;
 import org.hzero.mybatis.helper.SecurityTokenHelper;
@@ -105,14 +110,15 @@ public class MemberRoleAssignService {
             throw new CommonException("hiam.warn.memberRole.batchDeleteMissMemberIdOrRoleId");
         }
 
+        CustomUserDetails self = UserUtils.getUserDetails();
+        Long curUserId = self.getUserId();
         if (checkAuth) {
-            // 超级用户不能删除角色
-            Map<Long, User> map = new HashMap<>();
+            // 自己的顶级角色不能删除
             for (MemberRole memberRole : memberRoleList) {
-                if (HiamMemberType.USER.value().equalsIgnoreCase(memberRole.getMemberType())) {
-                    User user = map.computeIfAbsent(memberRole.getMemberId(), (id) -> userRepository.selectSimpleUserById(id));
-                    if (Boolean.TRUE.equals(user.getAdmin())) {
-                        throw new CommonException("hiam.warn.memberRole.adminUserCantDeleteRole", user.getLoginName());
+                if (HiamMemberType.USER.value().equals(memberRole.getMemberType()) && curUserId.equals(memberRole.getMemberId())) {
+                    boolean isTopRole = roleRepository.isTopAdminRole(curUserId, memberRole.getRoleId());
+                    if (isTopRole ) {
+                        throw new CommonException("hiam.warn.role.denyOperationSelfTopRole");
                     }
                 }
             }
