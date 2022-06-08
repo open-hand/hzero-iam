@@ -69,6 +69,7 @@ public class IDocumentServiceImpl implements IDocumentService {
                 permissionRefreshTask.remove(id);
             }, 5, 3000);
         }
+        permissionRefreshTask.remove(id);
     }
 
     private String buildId(String serviceName, String metaVersion) {
